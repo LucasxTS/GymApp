@@ -11,7 +11,7 @@ import com.example.gymapp.commons.navigation.FlowView
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContent {
+        setContent() {
             val navController: NavHostController = rememberNavController()
             val context = LocalContext.current
             FlowView(navController = navController, context)

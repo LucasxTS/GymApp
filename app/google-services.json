@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "510214902368",
+    "project_id": "gymapp-44178",
+    "storage_bucket": "gymapp-44178.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:510214902368:android:8af55dffaa591a196e6905",
+        "android_client_info": {
+          "package_name": "com.example.gymapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBvMgqgje-qzVkVLQKBmkrJvGkiJa3avM8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

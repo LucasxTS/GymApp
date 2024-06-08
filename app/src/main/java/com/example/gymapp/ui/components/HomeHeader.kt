@@ -26,13 +26,13 @@ fun HomeHeader() {
        horizontalArrangement =  Arrangement.Center,
        modifier = Modifier
            .fillMaxWidth()
-           .padding(16.dp)
+           .padding(24.dp)
    ){
     Text(
-        text = "BE THE BEST OF YOU.",
-        color = Color.Black,
-        fontSize = 32.sp,
-        textAlign = TextAlign.Center
+        text = "How are you feeling today?",
+        color = Color.White,
+        fontSize = 48.sp,
+
 
     )
    }
