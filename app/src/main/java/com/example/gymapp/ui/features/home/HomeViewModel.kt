@@ -7,7 +7,6 @@ import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.lang.IllegalArgumentException
 
 class HomeViewModel: ViewModel() {
 
@@ -30,7 +29,6 @@ class HomeViewModel: ViewModel() {
     }
 
     fun addTraining(training: Training) {
-
         viewModelScope.launch {
             fireStore.collection("workouts").add(training)
                 .addOnSuccessListener {
@@ -40,5 +38,22 @@ class HomeViewModel: ViewModel() {
                     throw IllegalArgumentException("Failed to add training", it)
                 }
         }
+    }
+    fun deleteTraining(index: Int) {
+        val currentList = _treinos.value.toMutableList()
+        if (index in currentList.indices) {
+            currentList.removeAt(index)
+            _treinos.value = currentList
+            fetchTraining()
+        }
+    }
+
+    fun editTraining(oldTraining: Training,  updatedTraining: Training) {
+        fireStore.collection("workouts").document(oldTraining.name).update(
+            mapOf(
+                oldTraining.name to updatedTraining.name
+            )
+        )
+        fetchTraining()
     }
 }

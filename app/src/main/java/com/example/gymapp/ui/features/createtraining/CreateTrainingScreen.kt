@@ -9,12 +9,9 @@ import com.example.gymapp.commons.navigation.routes
 
 @Composable
 fun CreateTrainingScreen(navController: NavController) {
-    Button(onClick = { navController.navigate(routes.EXERCICES.name) }) {
-        Text(text = "TELA 2 VIADOOOOO")
-    }
+
 
     }
-
 @Preview
 @Composable
 fun CreateTrainingScreenPreview() {
