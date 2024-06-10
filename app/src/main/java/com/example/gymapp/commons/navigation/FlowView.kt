@@ -2,11 +2,9 @@ package com.example.gymapp.commons.navigation
 
 import android.content.Context
 import androidx.compose.runtime.Composable
-import androidx.navigation.NavController
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import com.example.gymapp.ui.features.createtraining.CreateTrainingScreen
 import com.example.gymapp.ui.features.exercises.ExerciseScreen
 import com.example.gymapp.ui.features.home.HomeScreen
 
@@ -18,9 +16,6 @@ fun FlowView(
     NavHost(navController = navController, startDestination = routes.HOME.name) {
         composable(routes.HOME.name) {
             HomeScreen(navController)
-        }
-        composable(routes.CREATE_TRAINING.name) {
-            CreateTrainingScreen(navController)
         }
         composable(routes.EXERCICES.name) {
             ExerciseScreen(navController)

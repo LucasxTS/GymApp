@@ -1,9 +1,7 @@
 package com.example.gymapp.ui.components.home
 
 import android.annotation.SuppressLint
-import android.media.Image
 import android.os.Build
-import android.widget.ImageButton
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -16,6 +14,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -39,10 +38,12 @@ import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 
 @Composable
-fun TrainingList(trainingList: List<Training>, viewModel: HomeViewModel) {
+fun TrainingList(trainingList: List<Training?>, viewModel: HomeViewModel) {
     LazyColumn {
-        itemsIndexed(trainingList) { index, item ->
-            TrainingCard(item, viewModel)
+        items(trainingList) {item ->
+            if (item != null) {
+                TrainingCard(item, viewModel)
+            }
         }
     }
 }
@@ -133,5 +134,5 @@ val aaa = Training("Peito", "Segunda e sexta", Timestamp.now())
 @Preview
 @Composable
 fun TrainingListPreview() {
-
+    TrainingList(trainingList = training, viewModel = HomeViewModel())
 }

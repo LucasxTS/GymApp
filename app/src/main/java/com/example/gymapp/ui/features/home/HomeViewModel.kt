@@ -17,17 +17,16 @@ class HomeViewModel: ViewModel() {
     init {
         fetchTraining()
     }
-
-    private fun fetchTraining() {
+     private fun fetchTraining() {
         viewModelScope.launch {
             fireStore.collection("workouts").get()
                 .addOnSuccessListener { result ->
                     val fetchedTrainings = result.documents.map { it.toObject(Training::class.java) }
-                    _treinos.value = fetchedTrainings
+                        _treinos.value = fetchedTrainings
+
                 }
         }
     }
-
     fun addTraining(training: Training) {
         viewModelScope.launch {
             fireStore.collection("workouts").add(training)
@@ -47,7 +46,6 @@ class HomeViewModel: ViewModel() {
             fetchTraining()
         }
     }
-
     fun editTraining(oldTraining: Training,  updatedTraining: Training) {
         fireStore.collection("workouts").document(oldTraining.name).update(
             mapOf(

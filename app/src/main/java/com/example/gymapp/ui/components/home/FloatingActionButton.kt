@@ -18,14 +18,14 @@ import androidx.compose.ui.unit.dp
 
 
 @Composable
-fun FloatingActionButtonView() {
+fun FloatingActionButtonView(onClick: () -> Unit) {
     Column(
         modifier = Modifier.fillMaxSize(),
         verticalArrangement = Arrangement.Bottom,
         horizontalAlignment = Alignment.End
     ) {
         FloatingActionButton(
-            onClick = {  },
+            onClick =  onClick,
             shape = CircleShape,
             modifier = Modifier
                 .padding(16.dp)
@@ -42,5 +42,5 @@ fun FloatingActionButtonView() {
 @Preview
 @Composable
 fun FloatingButtonActionViewPreview() {
-    FloatingActionButtonView()
+    FloatingActionButtonView({})
 }
