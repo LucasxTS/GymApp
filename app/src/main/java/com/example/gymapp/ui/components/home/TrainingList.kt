@@ -39,18 +39,30 @@ import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 
 @Composable
-fun TrainingList(trainingList: List<Training?>, viewModel: HomeViewModel, onItemClick: (String) -> Unit) {
+fun TrainingList(
+    trainingList: List<Training?>,
+    viewModel: HomeViewModel,
+    onItemClick: (String) -> Unit,
+    onEdit: (Training) -> Unit,
+    onDelete: (Training) -> Unit
+) {
     LazyColumn {
         items(trainingList) {item ->
             if (item != null) {
-                TrainingCard(item, viewModel, onItemClick)
+                TrainingCard(item, viewModel, onItemClick, onEdit, onDelete)
             }
         }
     }
 }
 
 @Composable
-fun TrainingCard(training: Training, viewModel: HomeViewModel, clickable: (String) -> Unit) {
+fun TrainingCard(
+    training: Training,
+    viewModel: HomeViewModel,
+    clickable: (String) -> Unit,
+    onEdit: (Training) -> Unit,
+    onDelete: (Training) -> Unit
+) {
     Box(
         modifier = Modifier
             .padding(8.dp)
@@ -80,10 +92,10 @@ fun TrainingCard(training: Training, viewModel: HomeViewModel, clickable: (Strin
                     )
                 )
                 Spacer(modifier = Modifier.weight(1f))
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onEdit(training) }) {
                    Image(imageVector = Icons.Default.Edit, contentDescription = "Edit Icon")
                 }
-                IconButton(onClick = { /*TODO*/ }) {
+                IconButton(onClick = { onDelete(training) }) {
                    Image(imageVector = Icons.Default.Delete, contentDescription = "Delete icon")
                 }
             }

@@ -3,6 +3,8 @@ package com.example.gymapp.ui.features.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.models.Training
+import com.google.firebase.Timestamp
+import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,7 +34,7 @@ class HomeViewModel: ViewModel() {
     }
     fun addTraining(training: Training) {
         viewModelScope.launch {
-            fireStore.collection("workouts").add(training)
+            fireStore.collection("workouts").document(training.name).set(training)
                 .addOnSuccessListener {
                     fetchTraining()
                 }
@@ -41,20 +43,79 @@ class HomeViewModel: ViewModel() {
                 }
         }
     }
-    fun deleteTraining(index: Int) {
-        val currentList = _treinos.value.toMutableList()
-        if (index in currentList.indices) {
-            currentList.removeAt(index)
-            _treinos.value = currentList
-            fetchTraining()
+    fun deleteTraining(training: Training) {
+        val fireStore = fireStore.collection("workouts")
+        fireStore.document(training.name).delete()
+            .addOnSuccessListener {
+                fetchTraining()
+            }
+            .addOnFailureListener {
+                throw IllegalArgumentException("Failed to delete training", it)
+            }
+    }
+    fun editTraining(oldTraining: Training, updatedTraining: Training) {
+        viewModelScope.launch {
+            val _fireStore = fireStore.collection("workouts")
+            val oldTrainingDoc = _fireStore.document(oldTraining.name)
+            val newTrainingDoc = _fireStore.document(updatedTraining.name)
+
+            newTrainingDoc.set(updatedTraining)
+                .addOnSuccessListener {
+                    oldTrainingDoc.collection("exercises").get()
+                        .addOnSuccessListener { result ->
+                            val batch = fireStore.batch()
+                            for (document in result) {
+                                val newExerciseDoc = newTrainingDoc.collection("exercises").document(document.id)
+                                batch.set(newExerciseDoc, document.data)
+                            }
+                            batch.commit()
+                                .addOnSuccessListener {
+                                    deleteDocumentWithSubcollections(oldTrainingDoc)
+                                }
+                                .addOnFailureListener { batchError ->
+                                    throw IllegalArgumentException("Failed to copy exercises", batchError)
+                                }
+                        }
+                        .addOnFailureListener { subCollectionError ->
+                            throw IllegalArgumentException("Failed to get exercises", subCollectionError)
+                        }
+                }
+                .addOnFailureListener { copyError ->
+                    throw IllegalArgumentException("Failed to create new training document", copyError)
+                }
         }
     }
-    fun editTraining(oldTraining: Training,  updatedTraining: Training) {
-        fireStore.collection("workouts").document(oldTraining.name).update(
-            mapOf(
-                oldTraining.name to updatedTraining.name
-            )
-        )
-        fetchTraining()
+
+    private fun deleteDocumentWithSubcollections(docRef: DocumentReference) {
+        docRef.collection("exercises").get()
+            .addOnSuccessListener { result ->
+                val batch = fireStore.batch()
+                for (document in result) {
+                    batch.delete(document.reference)
+                }
+                batch.commit()
+                    .addOnSuccessListener {
+                        docRef.delete()
+                            .addOnSuccessListener {
+                                println("Old document deleted successfully")
+                                fetchTraining()
+                            }
+                            .addOnFailureListener { deleteError ->
+                                throw IllegalArgumentException("Failed to delete old training", deleteError)
+                            }
+                    }
+                    .addOnFailureListener { batchError ->
+                        throw IllegalArgumentException("Failed to delete exercises", batchError)
+                    }
+            }
+            .addOnFailureListener { subCollectionError ->
+                throw IllegalArgumentException("Failed to get exercises", subCollectionError)
+            }
+    }
+
+
+    fun createNewTraining(name: String, description: String) {
+        val newTraining = Training(name = name, description = description, date = Timestamp.now())
+        addTraining(newTraining)
     }
 }

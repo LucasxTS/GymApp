@@ -19,6 +19,7 @@ import androidx.navigation.compose.rememberNavController
 import com.example.gymapp.commons.navigation.CreateRoute
 import com.example.gymapp.domain.models.Training
 import com.example.gymapp.ui.components.home.AddTrainingDialog
+import com.example.gymapp.ui.components.home.EditTrainingDialog
 import com.example.gymapp.ui.components.home.FloatingActionButtonView
 import com.example.gymapp.ui.components.home.HomeHeader
 import com.example.gymapp.ui.components.home.TrainingList
@@ -26,7 +27,9 @@ import com.google.firebase.Timestamp
 
 @Composable
 fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = viewModel()) {
-    var showDialog by remember { mutableStateOf(false) }
+    var showCreateDialog by remember { mutableStateOf(false) }
+    var showEditDialog by remember { mutableStateOf(false) }
+    var trainingToEdit by remember { mutableStateOf<Training?>(null) }
     val treinos by homeViewModel.treinos.collectAsState()
 
     Box(
@@ -40,25 +43,44 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
                 .background(color = Color.Black)
         ) {
             HomeHeader()
-            TrainingList(treinos, viewModel = homeViewModel) { trainingName ->
-                navController.navigate(CreateRoute(trainingName))
-            }
+            TrainingList(
+                treinos,
+                viewModel = homeViewModel,
+                onItemClick = { trainingName ->
+                    navController.navigate(CreateRoute(trainingName))
+                },
+                onEdit = { training ->
+                    trainingToEdit = training
+                    showEditDialog = true
+                },
+                onDelete = { training ->
+                    homeViewModel.deleteTraining(training)
+                }
+            )
         }
-        FloatingActionButtonView { showDialog = true }
+        FloatingActionButtonView { showCreateDialog = true }
     }
 
-    if (showDialog) {
+    if (showCreateDialog) {
         AddTrainingDialog(
-            onDismissRequest = { showDialog = false },
+            onDismissRequest = { showCreateDialog = false },
             onConfirm = { name, description ->
-                val newTraining =
-                    Training(name = name, description = description, date = Timestamp.now())
-                homeViewModel.addTraining(newTraining)
+                homeViewModel.createNewTraining(name, description)
+            }
+        )
+    }
+
+    if (showEditDialog && trainingToEdit != null) {
+        EditTrainingDialog(
+            training = trainingToEdit!!,
+            onDismissRequest = { showEditDialog = false },
+            onConfirm = { name, description ->
+                homeViewModel.editTraining(trainingToEdit!!, Training(name, description, trainingToEdit!!.date))
+                showEditDialog = false
             }
         )
     }
 }
-
 @Preview
 @Composable
 fun HomeScreenPreview() {

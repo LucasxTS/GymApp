@@ -1,5 +1,6 @@
 package com.example.gymapp.ui.components.exercise
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -24,22 +29,26 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.example.gymapp.R
 import com.example.gymapp.domain.models.Exercise
+import com.example.gymapp.domain.models.Training
 import java.net.URL
 
 
 @Composable
-fun ExerciseList(exercises: List<Exercise?>) {
+fun ExerciseList(exercises: List<Exercise?>, onDelete: (Exercise) -> Unit) {
     Column {
         exercises.forEach { exercise ->
             if (exercise != null) {
-                ExerciseItem(exercise = exercise)
+                ExerciseItem(exercise = exercise, onDelete)
             }
         }
     }
 }
 
 @Composable
-fun ExerciseItem(exercise: Exercise) {
+fun ExerciseItem(
+    exercise: Exercise,
+    onDelete: (Exercise) -> Unit
+) {
     Box(
         modifier = Modifier
             .padding(8.dp)
@@ -71,6 +80,13 @@ fun ExerciseItem(exercise: Exercise) {
                     color = Color.LightGray
                 )
             }
+            Spacer(modifier = Modifier.weight(1f))
+            IconButton(onClick = { /*TODO*/ }) {
+                Image(imageVector = Icons.Default.Edit, contentDescription = "Edit Icon")
+            }
+            IconButton(onClick = { onDelete(exercise) }) {
+                Image(imageVector = Icons.Default.Delete, contentDescription = "Delete icon")
+            }
         }
     }
 }
@@ -79,7 +95,7 @@ fun ExerciseItem(exercise: Exercise) {
 @Preview
 @Composable
 fun ExerciseItemPreview() {
-
+    ExerciseItem(exercise = Exercise("Peito", "dasdasd", "dsdasdkla"), {})
 }
 
 

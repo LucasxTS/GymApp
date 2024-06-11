@@ -41,7 +41,12 @@ fun ExerciseScreen(navController: NavController, trainingName: String, exerciseV
                 modifier = Modifier
                     .fillMaxSize()
             ) {
-                ExerciseList(exercises = exercises)
+                ExerciseList(
+                    exercises = exercises,
+                    onDelete = {
+                        exerciseViewModel.deleteExercise(trainingName, it)
+                    }
+                )
             }
             FloatingActionButtonView { showDialog = true }
         }

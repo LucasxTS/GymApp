@@ -3,6 +3,7 @@ package com.example.gymapp.ui.features.exercises
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.models.Exercise
+import com.example.gymapp.domain.models.Training
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -31,8 +32,8 @@ class ExerciseViewModel : ViewModel() {
 
     fun addExercise(trainingName: String, exercise: Exercise) {
         viewModelScope.launch {
-            fireStore.collection("workouts").document(trainingName).collection("exercises")
-                .add(exercise)
+            fireStore.collection("workouts").document(trainingName).collection("exercises").document(exercise.name)
+                .set(exercise)
                 .addOnSuccessListener {
                     fetchExercises(trainingName)
                 }
@@ -42,7 +43,14 @@ class ExerciseViewModel : ViewModel() {
         }
     }
 
-    fun StringToUrl(stringURL: String): URL {
-        return URL(stringURL)
+    fun deleteExercise(trainingName: String, exercise: Exercise) {
+        val fireStore = fireStore.collection("workouts").document(trainingName).collection("exercises").document(exercise.name)
+        fireStore.delete()
+            .addOnSuccessListener {
+                fetchExercises(trainingName)
+            }
+            .addOnFailureListener {
+                throw IllegalArgumentException("Failed to delete exercise", it)
+            }
     }
 }
