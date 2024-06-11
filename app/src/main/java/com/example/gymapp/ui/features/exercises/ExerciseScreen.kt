@@ -34,7 +34,7 @@ fun ExerciseScreen(navController: NavController, trainingName: String, exerciseV
 
     LaunchedEffect(trainingName) {
         exerciseViewModel.fetchExercises(trainingName)
-        println(trainingName)
+
     }
         Box(
             modifier = Modifier
