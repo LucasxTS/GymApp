@@ -25,6 +25,9 @@ class HomeViewModel: ViewModel() {
                         _treinos.value = fetchedTrainings
 
                 }
+                .addOnFailureListener {
+                    throw IllegalArgumentException("Failed to add training", it)
+                }
         }
     }
     fun addTraining(training: Training) {

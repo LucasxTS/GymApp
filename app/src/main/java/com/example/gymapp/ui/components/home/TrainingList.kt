@@ -5,6 +5,7 @@ import android.os.Build
 import androidx.annotation.RequiresApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,24 +39,25 @@ import com.google.firebase.Timestamp
 import java.text.SimpleDateFormat
 
 @Composable
-fun TrainingList(trainingList: List<Training?>, viewModel: HomeViewModel) {
+fun TrainingList(trainingList: List<Training?>, viewModel: HomeViewModel, onItemClick: (String) -> Unit) {
     LazyColumn {
         items(trainingList) {item ->
             if (item != null) {
-                TrainingCard(item, viewModel)
+                TrainingCard(item, viewModel, onItemClick)
             }
         }
     }
 }
 
 @Composable
-fun TrainingCard(training: Training, viewModel: HomeViewModel) {
+fun TrainingCard(training: Training, viewModel: HomeViewModel, clickable: (String) -> Unit) {
     Box(
         modifier = Modifier
             .padding(8.dp)
             .fillMaxWidth()
             .background(Color(0xFF9AECDB), shape = RoundedCornerShape(8.dp))
             .padding(14.dp)
+            .clickable { clickable(training.name) }
     ) {
         Column(
             modifier = Modifier
@@ -134,5 +136,5 @@ val aaa = Training("Peito", "Segunda e sexta", Timestamp.now())
 @Preview
 @Composable
 fun TrainingListPreview() {
-    TrainingList(trainingList = training, viewModel = HomeViewModel())
+
 }

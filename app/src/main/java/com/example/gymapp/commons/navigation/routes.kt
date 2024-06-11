@@ -1,6 +1,10 @@
 package com.example.gymapp.commons.navigation
 
-enum class routes(name: String) {
-    HOME("home"),
-    EXERCICES("exercices")
+enum class routes {
+    HOME,
+    EXERCISES
+}
+
+fun CreateRoute(trainingName: String): String {
+    return "${routes.EXERCISES.name}/$trainingName"
 }

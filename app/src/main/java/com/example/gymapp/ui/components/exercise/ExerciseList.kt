@@ -28,10 +28,12 @@ import java.net.URL
 
 
 @Composable
-fun ExerciseList(exercises: List<Exercise>) {
+fun ExerciseList(exercises: List<Exercise?>) {
     Column {
         exercises.forEach { exercise ->
-            ExerciseItem(exercise = exercise)
+            if (exercise != null) {
+                ExerciseItem(exercise = exercise)
+            }
         }
     }
 }
@@ -46,7 +48,7 @@ fun ExerciseItem(exercise: Exercise) {
     ) {
         Row(modifier = Modifier.padding(8.dp)) {
             AsyncImage(
-                model = "https://assets.pokemon.com/assets/cms2/img/pokedex/detail/001.png",
+                model = exercise.image,
                 placeholder = painterResource(id = R.drawable.baseline_autorenew_24),
                 error = painterResource(id = R.drawable.baseline_autorenew_24),
                 contentDescription = "The delasign logo",
@@ -73,15 +75,11 @@ fun ExerciseItem(exercise: Exercise) {
     }
 }
 
-val item = Exercise(
-    "Stiff com barra",
-    URL("https://assets.pokemon.com/assets/cms2/img/pokedex/detail/001.png"),
-    "12 Repetições"
-)
+
 @Preview
 @Composable
 fun ExerciseItemPreview() {
-    ExerciseItem(item)
+
 }
 
 

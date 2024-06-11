@@ -16,6 +16,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
+import com.example.gymapp.commons.navigation.CreateRoute
 import com.example.gymapp.domain.models.Training
 import com.example.gymapp.ui.components.home.AddTrainingDialog
 import com.example.gymapp.ui.components.home.FloatingActionButtonView
@@ -33,14 +34,16 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
             .fillMaxSize()
             .background(color = Color.Black)
     ) {
-        Column (
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .background(color = Color.Black)
-        ){
+        ) {
             HomeHeader()
-            TrainingList(treinos, viewModel = homeViewModel)
-    }
+            TrainingList(treinos, viewModel = homeViewModel) { trainingName ->
+                navController.navigate(CreateRoute(trainingName))
+            }
+        }
         FloatingActionButtonView { showDialog = true }
     }
 
@@ -48,7 +51,8 @@ fun HomeScreen(navController: NavController, homeViewModel: HomeViewModel = view
         AddTrainingDialog(
             onDismissRequest = { showDialog = false },
             onConfirm = { name, description ->
-                val newTraining = Training(name = name, description = description, date = Timestamp.now())
+                val newTraining =
+                    Training(name = name, description = description, date = Timestamp.now())
                 homeViewModel.addTraining(newTraining)
             }
         )
