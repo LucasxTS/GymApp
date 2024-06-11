@@ -3,13 +3,10 @@ package com.example.gymapp.ui.features.exercises
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.models.Exercise
-import com.example.gymapp.domain.models.Training
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import java.net.URI
-import java.net.URL
 
 class ExerciseViewModel : ViewModel() {
 
@@ -21,7 +18,8 @@ class ExerciseViewModel : ViewModel() {
         viewModelScope.launch {
             fireStore.collection("workouts").document(trainingName).collection("exercises").get()
                 .addOnSuccessListener { result ->
-                    val fetchedExercises = result.documents.map { it.toObject(Exercise::class.java) }
+                    val fetchedExercises =
+                        result.documents.map { it.toObject(Exercise::class.java) }
                     _exercises.value = fetchedExercises
                 }
                 .addOnFailureListener {
@@ -29,10 +27,10 @@ class ExerciseViewModel : ViewModel() {
                 }
         }
     }
-
     fun addExercise(trainingName: String, exercise: Exercise) {
         viewModelScope.launch {
-            fireStore.collection("workouts").document(trainingName).collection("exercises").document(exercise.name)
+            fireStore.collection("workouts").document(trainingName).collection("exercises")
+                .document(exercise.name)
                 .set(exercise)
                 .addOnSuccessListener {
                     fetchExercises(trainingName)
@@ -42,9 +40,24 @@ class ExerciseViewModel : ViewModel() {
                 }
         }
     }
+    fun editExercise(trainingName: String, oldExerciseName: String, updatedExercise: Exercise) {
+        val exerciseRef =
+            fireStore.collection("workouts").document(trainingName).collection("exercises")
+        exerciseRef.document(oldExerciseName).delete().addOnSuccessListener {
+            exerciseRef.document(updatedExercise.name).set(updatedExercise).addOnSuccessListener {
+                fetchExercises(trainingName)
+            }.addOnFailureListener {
+                throw IllegalArgumentException("Failed to update Exercise", it)
+            }
+        }.addOnFailureListener {
+            throw IllegalArgumentException("Failed to delete old Exercise", it)
+        }
+    }
 
     fun deleteExercise(trainingName: String, exercise: Exercise) {
-        val fireStore = fireStore.collection("workouts").document(trainingName).collection("exercises").document(exercise.name)
+        val fireStore =
+            fireStore.collection("workouts").document(trainingName).collection("exercises")
+                .document(exercise.name)
         fireStore.delete()
             .addOnSuccessListener {
                 fetchExercises(trainingName)

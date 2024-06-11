@@ -3,6 +3,7 @@ package com.example.gymapp.ui.features.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.gymapp.domain.models.Training
+import com.example.gymapp.ui.components.home.EditTrainingDialog
 import com.google.firebase.Timestamp
 import com.google.firebase.firestore.DocumentReference
 import com.google.firebase.firestore.FirebaseFirestore
@@ -85,7 +86,6 @@ class HomeViewModel: ViewModel() {
                 }
         }
     }
-
     private fun deleteDocumentWithSubcollections(docRef: DocumentReference) {
         docRef.collection("exercises").get()
             .addOnSuccessListener { result ->
@@ -112,8 +112,6 @@ class HomeViewModel: ViewModel() {
                 throw IllegalArgumentException("Failed to get exercises", subCollectionError)
             }
     }
-
-
     fun createNewTraining(name: String, description: String) {
         val newTraining = Training(name = name, description = description, date = Timestamp.now())
         addTraining(newTraining)

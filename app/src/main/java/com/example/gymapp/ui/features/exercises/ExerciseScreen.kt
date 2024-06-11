@@ -19,6 +19,7 @@ import androidx.navigation.NavController
 import androidx.navigation.compose.rememberNavController
 import com.example.gymapp.domain.models.Exercise
 import com.example.gymapp.ui.components.exercise.AddExerciseDialog
+import com.example.gymapp.ui.components.exercise.EditExerciseDialog
 import com.example.gymapp.ui.components.exercise.ExerciseList
 import com.example.gymapp.ui.components.home.FloatingActionButtonView
 
@@ -27,6 +28,9 @@ import com.example.gymapp.ui.components.home.FloatingActionButtonView
 fun ExerciseScreen(navController: NavController, trainingName: String, exerciseViewModel: ExerciseViewModel = viewModel()) {
         val exercises by exerciseViewModel.exercises.collectAsState()
         var showDialog by remember { mutableStateOf(false) }
+        var editExercise by remember { mutableStateOf<Exercise?>(null) }
+        var showEditDialog by remember { mutableStateOf(false) }
+
 
     LaunchedEffect(trainingName) {
         exerciseViewModel.fetchExercises(trainingName)
@@ -45,6 +49,9 @@ fun ExerciseScreen(navController: NavController, trainingName: String, exerciseV
                     exercises = exercises,
                     onDelete = {
                         exerciseViewModel.deleteExercise(trainingName, it)
+                    }, onEdit =  {exercise ->
+                        editExercise = exercise
+                        showEditDialog = true
                     }
                 )
             }
@@ -59,7 +66,22 @@ fun ExerciseScreen(navController: NavController, trainingName: String, exerciseV
             }
         )
     }
+    if (showEditDialog && editExercise != null) {
+        EditExerciseDialog(
+            exercise = editExercise!!,
+            onDismissRequest = {
+                showEditDialog = false
+                editExercise = null
+            },
+            onConfirm = { name, description, imageUrl ->
+                val updatedExercise = Exercise(name = name, observation = description, image = imageUrl)
+                exerciseViewModel.editExercise(trainingName, editExercise!!.name, updatedExercise)
+                showEditDialog = false
+                editExercise = null
+            }
+        )
     }
+}
 
 @Preview
 @Composable

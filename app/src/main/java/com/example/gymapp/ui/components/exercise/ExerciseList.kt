@@ -34,11 +34,11 @@ import java.net.URL
 
 
 @Composable
-fun ExerciseList(exercises: List<Exercise?>, onDelete: (Exercise) -> Unit) {
+fun ExerciseList(exercises: List<Exercise?>, onDelete: (Exercise) -> Unit, onEdit: (Exercise) -> Unit) {
     Column {
         exercises.forEach { exercise ->
             if (exercise != null) {
-                ExerciseItem(exercise = exercise, onDelete)
+                ExerciseItem(exercise = exercise, onDelete, onEdit)
             }
         }
     }
@@ -47,7 +47,8 @@ fun ExerciseList(exercises: List<Exercise?>, onDelete: (Exercise) -> Unit) {
 @Composable
 fun ExerciseItem(
     exercise: Exercise,
-    onDelete: (Exercise) -> Unit
+    onDelete: (Exercise) -> Unit,
+    onEdit: (Exercise) -> Unit
 ) {
     Box(
         modifier = Modifier
@@ -81,7 +82,7 @@ fun ExerciseItem(
                 )
             }
             Spacer(modifier = Modifier.weight(1f))
-            IconButton(onClick = { /*TODO*/ }) {
+            IconButton(onClick = { onEdit(exercise) }) {
                 Image(imageVector = Icons.Default.Edit, contentDescription = "Edit Icon")
             }
             IconButton(onClick = { onDelete(exercise) }) {
@@ -95,7 +96,7 @@ fun ExerciseItem(
 @Preview
 @Composable
 fun ExerciseItemPreview() {
-    ExerciseItem(exercise = Exercise("Peito", "dasdasd", "dsdasdkla"), {})
+    ExerciseItem(exercise = Exercise("", "", ""), {}, {})
 }
 
 
